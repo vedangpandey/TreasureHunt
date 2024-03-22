@@ -1,7 +1,6 @@
 package hunt.tile;
 
 import hunt.main.GamePanel;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -12,16 +11,16 @@ import java.util.Arrays;
 
 public class TileManager {
     GamePanel gp;
-    Tile[] tiles;
+    public Tile[] tiles;
 
-    int[][] mapTileNumber;
+    public int[][] mapTileNumber;
 
     public TileManager(GamePanel gp){
         this.gp=gp;
-        mapTileNumber=new int[gp.maxScreenRow][gp.maxScreenCol];
+        mapTileNumber=new int[gp.maxWorldRow][gp.maxWorldCol];
         tiles=new Tile[10];
         getTileImage();
-        loadMap("/res/maps/Map01.txt");
+        loadMap("/res/maps/WorldMap01.txt");
     }
     public void getTileImage(){
         try{
@@ -29,14 +28,17 @@ public class TileManager {
             tiles[0].image= ImageIO.read(getClass().getResourceAsStream("/res/tiles/grass.png"));
             tiles[1]=new Tile();
             tiles[1].image= ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall.png"));
+            tiles[1].collision=true;
             tiles[2]=new Tile();
             tiles[2].image= ImageIO.read(getClass().getResourceAsStream("/res/tiles/water.png"));
+            tiles[2].collision=true;
             tiles[3]=new Tile();
-            tiles[3].image= ImageIO.read(getClass().getResourceAsStream("res/tiles/earth.png"));
+            tiles[3].image= ImageIO.read(getClass().getResourceAsStream("/res/tiles/earth.png"));
             tiles[4]=new Tile();
-            tiles[4].image=ImageIO.read(getClass().getResourceAsStream("res/tiles/tree.png"));
+            tiles[4].image=ImageIO.read(getClass().getResourceAsStream("/res/tiles/tree.png"));
+            tiles[4].collision=true;
             tiles[5]=new Tile();
-            tiles[5].image=ImageIO.read(getClass().getResourceAsStream("res/tiles/sand.png"));
+            tiles[5].image=ImageIO.read(getClass().getResourceAsStream("/res/tiles/sand.png"));
 
 
         }catch (IOException io){
@@ -49,26 +51,39 @@ public class TileManager {
             InputStream is=getClass().getResourceAsStream(filepath);
             BufferedReader br=new BufferedReader(new InputStreamReader(is));
 
-            for(int i=0;i<gp.maxScreenRow;i++){
+            for(int i=0;i<mapTileNumber.length;i++){
                 String line=br.readLine();
                 String[] st=line.split(" ");
-                for(int j=0;j<gp.maxScreenCol;j++){
+                for(int j=0;j<mapTileNumber[i].length;j++){
                     mapTileNumber[i][j]= Integer.parseInt(st[j]);
                 }
-                System.out.println(Arrays.toString(mapTileNumber[i]));
+                //System.out.println(Arrays.toString(mapTileNumber[i]));
             }
         }catch(Exception io){
             io.printStackTrace();
         }
     }
     public void draw(Graphics2D g){
-        int col=0;
-        int row=0;
-        for(int i=0;i<gp.maxScreenRow;i++){
-            for(int j=0;j<gp.maxScreenCol;j++){
-                int k=mapTileNumber[i][j];
-                g.drawImage(tiles[k].image,(48*j),(48*i),48,48,null);
-            }
-        }
+        int worldCol=0;
+        int worldRow=0;
+                while(worldCol< gp.maxWorldCol&&worldRow< gp.maxWorldRow){
+                    int worldX=gp.tileSize*worldCol;
+                    int worldY=gp.tileSize*worldRow;
+                    int screenX=worldX-gp.player.worldX+gp.player.screenX;
+                    int screenY=worldY-gp.player.worldY+gp.player.screenY;
+//                    System.out.println(screenX+" "+screenY);
+                int k=mapTileNumber[worldRow][worldCol];
+                if(worldX>=gp.player.worldX-gp.player.screenX- gp.tileSize&&
+                        worldX<=gp.player.screenX+gp.player.worldX+ gp.tileSize&&
+                        worldY>=gp.player.worldY-gp.player.screenY- gp.tileSize&&
+                        worldY<=gp.player.worldY+gp.player.screenY+gp.tileSize)
+                g.drawImage(tiles[k].image,screenX,screenY,gp.tileSize,gp.tileSize,null);
+                worldCol++;
+                if(worldCol== gp.maxWorldCol){
+                    worldCol=0;
+                    worldRow++;
+                }
+                }
+
     }
 }

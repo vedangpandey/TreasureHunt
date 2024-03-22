@@ -10,22 +10,25 @@ import java.io.IOException;
 public class Player extends Entity{
     GamePanel gp;
     KeyHandler kh;
-    int x;
-    int y;
-    int speed;
-    int spiritnum=0;
-    int spiritcount=0;
+
+    public final int screenX;
+    public final int screenY;
+
     public Player(GamePanel gp,KeyHandler kh){
         this.gp=gp;
         this.kh=kh;
+        screenX=gp.screenWidth/2-(gp.tileSize/2);
+        screenY=gp.screenHeight/2-(gp.tileSize/2);
+        solidArea=new Rectangle(8,16,32,30);
+
         setDefaultValues();
         getPlayerImage();
     }
     public void setDefaultValues(){
-        x=100;
-        y=100;
+        worldX= (gp.tileSize*23);
+        worldY=(gp.tileSize*21);
         speed=4;
-        direction="right";
+        direction="up";
     }
     public void getPlayerImage(){
         try{
@@ -49,18 +52,24 @@ public class Player extends Entity{
                 spiritnum ^= 1;
                 spiritcount=0;
             }
+            collisionOn=false;
+            gp.cChecker.checkTile(this);
             if (kh.upPressed) {
                 direction = "up";
-                y -= speed;
             } else if (kh.downPressed) {
                 direction = "down";
-                y += speed;
             } else if (kh.leftPressed) {
                 direction = "left";
-                x -= speed;
             } else if (kh.rightPressed) {
                 direction = "right";
-                x += speed;
+            }
+            if(!collisionOn) {
+                switch(direction){
+                    case "up":worldY -= speed;break;
+                    case "down":worldY += speed;break;
+                    case "left": worldX -= speed;break;
+                    case "right":worldX += speed;break;
+                }
             }
         }
     }
@@ -73,7 +82,7 @@ public class Player extends Entity{
             case "left":image=spiritnum==0?left1:left2;break;
             case "right":image=spiritnum==0?right1:right2;break;
         }
-        g.drawImage(image,x,y,gp.tileSize, gp.tileSize,null);
+        g.drawImage(image,screenX,screenY,gp.tileSize, gp.tileSize,null);
         g.dispose();
     }
 }

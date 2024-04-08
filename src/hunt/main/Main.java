@@ -16,7 +16,7 @@ public class Main {
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-
+        gp.assetSetupGame();
         gp.startGameThread();
     }
 }

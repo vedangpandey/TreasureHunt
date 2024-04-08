@@ -1,6 +1,7 @@
 package hunt.main;
 
 import hunt.entity.Player;
+import hunt.object.SuperObject;
 import hunt.tile.TileManager;
 
 import javax.swing.*;
@@ -28,7 +29,8 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler kh=new KeyHandler();
     public Player player=new Player(this,kh);
     TileManager tm=new TileManager(this);
-
+    SuperObject[] sp=new SuperObject[10];
+    public Asset_Setter asset_setter=new Asset_Setter(this);
     public CollisionChecker cChecker=new CollisionChecker(this);
 
      public GamePanel(){
@@ -39,6 +41,10 @@ public class GamePanel extends JPanel implements Runnable{
          this.setFocusable(true);
 
 
+     }
+
+     public void assetSetupGame(){
+         asset_setter.setObject();
      }
      public void startGameThread(){
          gameThread=new Thread(this);
@@ -88,7 +94,15 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
          super.paintComponent(g);
          Graphics2D g2=(Graphics2D) g;
+         //tile
         tm.draw(g2);
+
+        //object
+        for(int i=0;i<10;i++){
+            if(sp[i]!=null)
+                sp[i].draw(g2,this);
+        }
+        //Player
          player.draw(g2);
 
 

@@ -11,6 +11,7 @@ public class Entity {
     public int spiritnum=0;
     public int spiritcount=0;
     public Rectangle solidArea;
+    public int solidAreaDefaultX,solidAreaDefaultY;
     public boolean collisionOn;
 
 

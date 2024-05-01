@@ -13,6 +13,7 @@ public class Player extends Entity{
 
     public final int screenX;
     public final int screenY;
+    public int hasKey=0;
 
     public Player(GamePanel gp,KeyHandler kh){
         this.gp=gp;
@@ -20,6 +21,8 @@ public class Player extends Entity{
         screenX=gp.screenWidth/2-(gp.tileSize/2);
         screenY=gp.screenHeight/2-(gp.tileSize/2);
         solidArea=new Rectangle(8,16,32,30);
+        solidAreaDefaultX=solidArea.x;
+        solidAreaDefaultY=solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
@@ -52,8 +55,13 @@ public class Player extends Entity{
                 spiritnum ^= 1;
                 spiritcount=0;
             }
+            //CHECK TILE COLLISION
             collisionOn=false;
             gp.cChecker.checkTile(this);
+
+            int objIndex=gp.cChecker.checkObject(this,true);
+            pickUpObject(objIndex);
+            //IF COLLISION IS FALSE,PLAYER CAN MOVE
             if (kh.upPressed) {
                 direction = "up";
             } else if (kh.downPressed) {
@@ -70,6 +78,43 @@ public class Player extends Entity{
                     case "left": worldX -= speed;break;
                     case "right":worldX += speed;break;
                 }
+            }
+        }
+    }
+    public void pickUpObject(int i){
+        if(i!=999){
+            System.out.println("i "+gp.sp[i].name);
+            String objectName=gp.sp[i].name;
+            switch (objectName){
+                case "Key":
+                    gp.playSE(1);
+                    hasKey++;
+                    gp.sp[i]=null;
+                    gp.ui.showMessage("You got a Key!");
+                    break;
+                case "Chest":
+                    gp.ui.gameFinished=true;
+                    gp.stopMusic();
+                    gp.playSE(4);
+                    break;
+                case "Door":
+                    gp.playSE(3);
+                    if(hasKey>0)
+                    {
+                        gp.sp[i]=null;
+                        hasKey--;
+
+                        gp.ui.showMessage("You opened The door!");
+                    }
+                    else
+                        gp.ui.showMessage("You need a key!");
+                    break;
+                case "Boots":
+                    gp.playSE(2);
+                    speed+=2;
+                    gp.sp[i]=null;
+                    gp.ui.showMessage("You got a Boots!");
+                    break;
             }
         }
     }

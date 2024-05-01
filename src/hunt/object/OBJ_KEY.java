@@ -8,7 +8,7 @@ import java.awt.*;
 public class OBJ_KEY extends SuperObject{
 
     public OBJ_KEY(){
-        name="key";
+        name="Key";
         try{
             image= ImageIO.read(getClass().getResourceAsStream("/res/object/key.png"));
         }catch (Exception ex){

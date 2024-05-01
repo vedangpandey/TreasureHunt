@@ -1,5 +1,6 @@
 package hunt.main;
 
+import hunt.object.OBJ_BOOTS;
 import hunt.object.OBJ_CHEST;
 import hunt.object.OBJ_DOOR;
 import hunt.object.OBJ_KEY;
@@ -38,6 +39,11 @@ public class Asset_Setter {
         gp.sp[6]=new OBJ_CHEST();
         gp.sp[6].worldX= 10*gp.tileSize;
         gp.sp[6].worldY=7*gp.tileSize;
+
+
+        gp.sp[7]=new OBJ_BOOTS();
+        gp.sp[7].worldX= 38*gp.tileSize;
+        gp.sp[7].worldY=42*gp.tileSize;
 
 
 
